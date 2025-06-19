@@ -1,4 +1,4 @@
-import React, { createContext, useReducer, useContext } from 'react';
+import React, { createContext, useContext, useReducer } from 'react';
 
 const TarefaContext = createContext();
 
@@ -7,49 +7,48 @@ const initialState = {
   filtro: 'todas',
 };
 
-function tarefaReducer(state, action) {
+function reducer(state, action) {
   switch (action.type) {
     case 'ADICIONAR_TAREFA':
+      const novaTarefa = {
+        id: Date.now(),
+        titulo: action.payload,
+        concluida: false,
+      };
       return {
         ...state,
-        tarefas: [
-          ...state.tarefas,
-          { id: Date.now(), titulo: action.payload, concluida: false },
-        ],
+        tarefas: [...state.tarefas, novaTarefa],
       };
     case 'TOGGLE_TAREFA':
       return {
         ...state,
-        tarefas: state.tarefas.map((tarefa) =>
-          tarefa.id === action.payload
-            ? { ...tarefa, concluida: !tarefa.concluida }
-            : tarefa
+        tarefas: state.tarefas.map(t =>
+          t.id === action.payload ? { ...t, concluida: !t.concluida } : t
         ),
+      };
+    case 'REMOVER_TAREFA':
+      return {
+        ...state,
+        tarefas: state.tarefas.filter(t => t.id !== action.payload),
       };
     case 'SET_FILTRO':
       return {
         ...state,
         filtro: action.payload,
       };
-    case 'REMOVER_TAREFA':
-      return {
-        ...state,
-        tarefas: state.tarefas.filter(tarefa => tarefa.id !== action.payload)
-      };
     default:
       return state;
   }
 }
 
-export function TarefaProvider({ children }) {
-  const [state, dispatch] = useReducer(tarefaReducer, initialState);
+export const TarefaProvider = ({ children }) => {
+  const [state, dispatch] = useReducer(reducer, initialState);
+
   return (
     <TarefaContext.Provider value={{ state, dispatch }}>
       {children}
     </TarefaContext.Provider>
   );
-}
+};
 
-export function useTarefaContext() {
-  return useContext(TarefaContext);
-}
+export const useTarefaContext = () => useContext(TarefaContext);

@@ -1,21 +1,29 @@
 import React from 'react';
-import Tarefa from './Tarefa';
 import { useTarefaContext } from '../context/TarefaContext';
+import Tarefa from './Tarefa';
+import MensagemVazia from './MensagemVazia';
+import './listaTarefas.css';
 
 const ListaDeTarefas = () => {
   const { state } = useTarefaContext();
-  const { tarefas, filtro } = state;
 
-  const tarefasFiltradas = tarefas.filter((tarefa) => {
-    if (filtro === 'todas') return true;
-    if (filtro === 'concluidas') return tarefa.concluida;
-    if (filtro === 'pendentes') return !tarefa.concluida;
-    return true;
-  });
+  let tarefasFiltradas = [];
+  switch (state.filtro) {
+    case 'concluidas':
+      tarefasFiltradas = state.tarefas.filter(t => t.concluida);
+      break;
+    case 'pendentes':
+      tarefasFiltradas = state.tarefas.filter(t => !t.concluida);
+      break;
+    default:
+      tarefasFiltradas = state.tarefas;
+  }
+
+  if (tarefasFiltradas.length === 0) return <MensagemVazia />;
 
   return (
     <ul>
-      {tarefasFiltradas.map((tarefa) => (
+      {tarefasFiltradas.map(tarefa => (
         <Tarefa key={tarefa.id} tarefa={tarefa} />
       ))}
     </ul>

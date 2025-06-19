@@ -15,9 +15,7 @@ const Tarefa = ({ tarefa }) => {
         checked={tarefa.concluida}
         onChange={() => dispatch({ type: 'TOGGLE_TAREFA', payload: tarefa.id })}
       />
-      <span className={tarefa.concluida ? 'tarefa-concluida' : ''}>
-        {tarefa.titulo}
-      </span>
+      <span className={tarefa.concluida ? 'tarefa-concluida' : ''}>{tarefa.titulo}</span>
       <button
         className="btn-remover"
         aria-label={`Remover tarefa ${tarefa.titulo}`}
